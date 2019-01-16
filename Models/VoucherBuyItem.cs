@@ -13,8 +13,11 @@ namespace LightningVoucher.Models
         public long SatPerVoucher { get; set; }
         public bool claimed { get; set; }
 
+        public ICollection<VoucherItem> Vouchers { get; set; } = new List<VoucherItem>();
 
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public Nullable<DateTime> LastUsed { get; set; } = DateTime.UtcNow;
+
+        
     }
 }

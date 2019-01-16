@@ -59,9 +59,10 @@ function buyVoucher() {
 		cache: false,
 		success: function(data) {
 			console.log(data);
+			$("#buy-invoice-stuff").remove();
 			textfield = $("#buy-invoice-text");
 			textfield.show();
-			textfield.append(data.paymentRequest);
+			textfield.append("<span id='buy-invoice-stuff'>"+data.paymentRequest+"</span>");
 			$("#voucher-buy-payreq").val(data.paymentRequest);
 
 		},
@@ -93,8 +94,8 @@ function claimVoucher() {
 				$.each(data.vouchers,
 					function(key, item) {
 						const tr = $("<tr></tr>")
-							.append($("<td></td>").text(item.id));
-
+							.append($("<td></td>").text(item.id))
+							.append($("<td></td>").text(restSat));
 						tr.appendTo(tBody);
 					});
 			} else {

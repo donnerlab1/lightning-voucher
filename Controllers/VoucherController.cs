@@ -30,6 +30,19 @@ namespace LightningVoucher.Controllers
                 _context.VoucherItems.Add(new VoucherItem() {StartSat = 2});
                 _context.SaveChanges();
             }
+
+            if (_context.VoucherBuyItems.Count() == 0)
+            {
+                _context.VoucherBuyItems.Add(new VoucherBuyItem()
+                {
+                    Amount = 3,
+                    claimed = false,
+                    Id =
+                        "lnbc150n1pwr7z63pp568q60gxz5ta69v6jqxxpnlt2yg006hvkcq6pn8s5lc03pmkk3yzqdqqcqzyskp254xkgme7knwf0ygufdr7t24zz0dnctglttv8ezk0r9t4jhyh4q8eenjc0vgc59jladn50wxupua2sm624sp57cg4z9j8p3phd76qqlx6tn3",
+                    SatPerVoucher = 5
+                });
+                _context.SaveChanges();
+            }
         }
 
 
@@ -121,9 +134,15 @@ namespace LightningVoucher.Controllers
                 response.ErrorCode = "Payment not Found";
             }
 
-
-
-            else
+            else if (voucherBuyItem.claimed)
+            {
+                var data = _context.VoucherBuyItems.Include(a => a.Vouchers).FirstOrDefault(u => u.Id == payreq);
+                foreach (var voucherItem in data.Vouchers)
+                {
+                    response.ErrorCode = "Ok";
+                    response.Vouchers.Add(voucherItem);
+                }
+            } else
             {
                 if (await _lightning.ValidatePayment(payreq, ""))
                 {
@@ -132,10 +151,13 @@ namespace LightningVoucher.Controllers
                     {
                         var voucher = _context.VoucherItems
                             .Add(new VoucherItem() {StartSat = voucherBuyItem.SatPerVoucher}).Entity;
+                        voucherBuyItem.Vouchers.Add(voucher);
                         response.Vouchers.Add(voucher);
 
                     }
-                    _context.Entry(voucherBuyItem).State = EntityState.Deleted;
+
+                    voucherBuyItem.claimed = true;
+                    _context.Entry(voucherBuyItem).State = EntityState.Modified;
                     
                     _context.SaveChanges();
                 }
