@@ -9,6 +9,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Formatters.Xml;
 
 namespace LightningVoucher.ln
 {
@@ -49,6 +50,15 @@ namespace LightningVoucher.ln
         {
 
             Console.Write("LIGHTNINGLOG: SendPayment " + payreq);
+            var payment = await DecodePayReq(payreq);
+            if (payment.NumSatoshis > 100)
+            {
+
+                return new SendResponse
+                {
+                    PaymentError = "Error: too big of a payment"
+                };
+            }
             var s = await client.SendPaymentSyncAsync(new SendRequest {PaymentRequest = payreq});
             
             return s;
@@ -74,6 +84,7 @@ namespace LightningVoucher.ln
         public async Task<Invoice> GetPayReq(ulong amt)
         {
             Console.Write("LIGHTNINGLOG: GetPayReq " + amt);
+            
             long fee = (long) (amt * (feePercentage/100f));
             if (fee < 1 && feePercentage != 0)
                 fee = 1;
