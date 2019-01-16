@@ -12,7 +12,7 @@
 <body style>
 <div class="hero">
 	<p><h1>Lightning-Voucher</h1></p>
-	
+	<p class="reckless">HIGHLY EXPERIMENTAL USE WITH CAUTION, YOUR FUNDS MAY GET LOST</p>
 </div>
 <div class="centered">
 	<div id="use-voucher">
@@ -40,8 +40,8 @@
 				<div id="payment-div">
 					<table align="center">
 						<tr>
-							<th>Error Code</th>
-							<th>PreImage</th>
+							<th>Status Code</th>
+							<th>Total Cost</th>
 						</tr>
 						<tbody id="payment-table"></tbody>
 					</table>
@@ -50,7 +50,7 @@
 </div>
 
 <div id="buy-voucher">
-	<h3>Buy Voucher</h3>
+	<h3 id="fee-text">Buy Voucher (Fee: )</h3>
 	<form action="javascript:void(0);" method="GET" onsubmit="buyVoucher()">
 		<input type="text" id="buy_amt" placeholder="Voucher Amount">
 		<input type="text" id="buy_sat" placeholder="Satoshi per Voucher">

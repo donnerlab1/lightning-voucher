@@ -15,6 +15,7 @@ namespace LightningVoucher.ln
         Task<ulong> SatCost(string payreq);
         Task<Invoice> GetPayReq(ulong amt);
         Task<PayReq> DecodePayReq(string payreq);
+        uint getFee();
     }
 
     public class DemoLightning : ILightning
@@ -44,6 +45,11 @@ namespace LightningVoucher.ln
         }
 
         public Task<PayReq> DecodePayReq(string payreq)
+        {
+            throw new NotImplementedException();
+        }
+
+        public uint getFee()
         {
             throw new NotImplementedException();
         }

@@ -16,6 +16,8 @@ namespace LightningVoucher.ln
     {
         public Lightning.LightningClient client;
 
+        public static uint feePercentage;
+
         public LndGrpcService(IConfiguration config)
         {
             /*
@@ -29,6 +31,7 @@ namespace LightningVoucher.ln
             var tls = File.ReadAllText(directory + "/tls.cert");
             var hexMac = Util.ToHex(File.ReadAllBytes(directory + "/admin.macaroon"));
             var rpc = config.GetValue<string>("rpc");
+            feePercentage = config.GetValue<uint>("fee");
 
             var macaroonCallCredentials = new MacaroonCallCredentials(hexMac);
             var channelCreds = ChannelCredentials.Create(new SslCredentials(tls), macaroonCallCredentials.credentials);
@@ -56,12 +59,20 @@ namespace LightningVoucher.ln
             return s;
         }
 
+        public uint getFee()
+        {
+            return feePercentage;
+        }
+
        
         public async Task<Invoice> GetPayReq(ulong amt)
         {
+            long fee = (long) (amt * (feePercentage/100f));
+            if (fee < 1 && feePercentage != 0)
+                fee = 1;
             var payreq = await client.AddInvoiceAsync(new Invoice
             {
-                Value = (long)amt
+                Value = (long)amt+fee
             });
             var res = await client.LookupInvoiceAsync(new PaymentHash
             {

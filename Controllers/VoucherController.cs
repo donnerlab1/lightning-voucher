@@ -104,11 +104,12 @@ namespace LightningVoucher.Controllers
                     _context.Entry(voucherItem).State = EntityState.Unchanged;
                     return res;
                 }
-
+                Console.WriteLine("COST: " + (ulong)res.PaymentRoute.TotalAmt + " AND " +(ulong)res.PaymentRoute.TotalAmtMsat + " AND " +(ulong)(res.PaymentRoute.TotalAmtMsat / 1000));
+                cost = (ulong) res.PaymentRoute.TotalAmt;
                 voucherItem.UsedSat += cost;
                 _context.Entry(voucherItem).State = EntityState.Modified;
 
-                if (cost == voucherItem.StartSat - voucherItem.UsedSat)
+                if (voucherItem.UsedSat >= voucherItem.StartSat)
                 {
 
                     _context.Entry(voucherItem).State = EntityState.Deleted;
@@ -123,10 +124,17 @@ namespace LightningVoucher.Controllers
         [HttpGet("/api/[controller]/buy/{amt}/{satPerVoucher}")]
         public async Task<ActionResult<Invoice>> GetVoucherInvoice(uint amt, ulong satPerVoucher)
         {
+            if (amt > 10 || satPerVoucher > 100)
+                return new Invoice {PaymentRequest = "ERROR: amount and satoshi per voucher is capped at 100"};
             var payReq = await _lightning.GetPayReq(amt * satPerVoucher);
             var buyItem = _context.VoucherBuyItems.Add(new VoucherBuyItem() { Id = payReq.PaymentRequest, Amount = amt, SatPerVoucher = satPerVoucher, claimed = false}).Entity;
             _context.SaveChanges();
             return payReq;
+        }
+        [HttpGet("/api/[controller]/buy/fee/")]
+        public async Task<ActionResult<FeeResponse>> GetFee()
+        {
+            return new FeeResponse {fee = _lightning.getFee()};
         }
 
         [HttpGet("/api/[controller]/claim/{payreq}")]
@@ -199,4 +207,9 @@ public class ClaimVoucherResponse
     {
         this.Vouchers.Add(item);
     }
+}
+
+public class FeeResponse
+{
+    public uint fee { get; set; }
 }

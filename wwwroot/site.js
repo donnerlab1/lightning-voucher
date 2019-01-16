@@ -9,8 +9,25 @@ $(document).ready(function() {
 	$("#decode-invoice-button").click(function() {
 		decodePayment();
 	});
+	getFee();
 	//getData();
 });
+
+function getFee() {
+	$.ajax({
+		type: "GET",
+		url: uri + "/buy/fee",
+		cache: false,
+		success: function (data) {
+			console.log(data);
+			$("#fee-text").text("Buy Voucher (Fee: " + data.fee + "%)");
+
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+
+		}
+	});
+}
 function decodePayment() {
 	const use_item = {
 		voucher_id: $("#voucher-id").val(),
@@ -72,16 +89,29 @@ function useVoucher() {
 		url: uri + "/pay/" + use_item.voucher_id + "/" + use_item.pay_req,
 		cache: false,
 		success: function(data) {
-			console.log(data);
+			console.log("USE: " + data);
 			$("#payment-div").show();
 			const tBody = $("#payment-table");	
 			$(tBody).empty();
 			console.log(window.btoa(data.paymentPreimage))
-			const tr = $("<tr></tr>")
-					.append($("<td></td>").text(data.paymentError))
-					.append($("<td></td>").text(window.btoa(data.paymentPreimage)))
-          
-				;
+			const tr = $("<tr></tr>");
+			if (data.paymentError === "")
+				data.paymentError = "Payment sent!"
+			if (data.paymentRoute == null) {
+				
+						tr.append($("<td></td>").text(data.paymentError))
+
+
+					;
+			} else {
+
+						tr.append($("<td></td>").text(data.paymentError))
+
+						.append($("<td></td>").text(data.paymentRoute.totalAmt))
+
+					;
+			}
+			
 			
 			tr.appendTo(tBody);
 
