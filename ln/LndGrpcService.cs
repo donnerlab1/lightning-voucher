@@ -43,6 +43,16 @@ namespace LightningVoucher.ln
         public async Task<SendResponse> SendPayment(string payreq)
         {
             var s = await client.SendPaymentSyncAsync(new SendRequest {PaymentRequest = payreq});
+            
+            return s;
+        }
+
+        public async Task<PayReq> DecodePayReq(string payreq)
+        {
+            var s = await client.DecodePayReqAsync(new PayReqString
+            {
+                PayReq = payreq
+            });
             return s;
         }
 

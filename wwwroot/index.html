@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
 	<meta charset="UTF-8">
@@ -15,23 +15,38 @@
 	
 </div>
 <div class="centered">
-<div id="use-voucher">
-	<h3>Use Voucher</h3>
-	<form action="javascript:void(0);" method="GET" onsubmit="useVoucher()">
-		<input type="text" id="voucher-id" placeholder="Voucher Id">
-		<input type="text" id="voucher-payreq" placeholder="Payment Request">
-		<input type="submit" value="Pay">
-	</form>
-	<div id="payment-div">
-		<table>
-			<tr>
-				<th>Error Code</th>
-				<th>PreImage</th>
-			</tr>
-			<tbody id="payment-table"></tbody>
-		</table>
-	</div>
-	<text type="hidden" id="buy-invoice">
+	<div id="use-voucher">
+		<h3>Use Voucher</h3>
+		<form action="javascript:void(0);" method="GET" onsubmit="getVoucher()">
+			<input type="text" id="voucher-id" placeholder="Voucher Id">
+			<input type="submit" value="Show">
+		</form><div id="get-voucher-div">
+			<table align="center" >
+				<tr>
+					<th>Voucher</th>
+					<th>Remaining Satoshi</th>
+					<th>Starting Satoshi</th>
+				</tr>
+				<tbody id="get-voucher-table"></tbody>
+			</table>
+		</div>
+			<form action="javascript:void(0);" method="GET" onsubmit="useVoucher()">
+				<input type="text" id="voucher-payreq" placeholder="Payment Request">
+				<input type="button" id="decode-invoice-button" value="Decode">
+				<input type="submit"  value="Pay">
+			</form><div id="decode-invoice-text">
+
+			</div>
+				<div id="payment-div">
+					<table align="center">
+						<tr>
+							<th>Error Code</th>
+							<th>PreImage</th>
+						</tr>
+						<tbody id="payment-table"></tbody>
+					</table>
+				</div>
+				<text type="hidden" id="buy-invoice">
 </div>
 
 <div id="buy-voucher">
@@ -41,7 +56,6 @@
 		<input type="text" id="buy_sat" placeholder="Satoshi per Voucher">
 		<input type="submit" value="Buy">
 	</form>
-	<text type="hidden" id="buy-invoice-text">
 
 	<div id="buy-invoice-text">
 
@@ -60,7 +74,7 @@
 		<table align="center" >
 			<tr>
 				<th>Vouchers</th>
-				<th>Remaing Satoshi</th>
+				<th>Remaining Satoshi</th>
 			</tr>
 			<tbody id="voucher-table"></tbody>
 		</table>

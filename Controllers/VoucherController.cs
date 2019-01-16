@@ -66,6 +66,13 @@ namespace LightningVoucher.Controllers
             return voucherItem;
         }
 
+        [HttpGet("/api/[controller]/decode/{payreq}")]
+        public async Task<ActionResult<PayReq>> DecodePayReq(string payreq)
+        {
+            var payReq = await _lightning.DecodePayReq(payreq);
+            return payReq;
+        }
+
         [HttpGet("/api/[controller]/pay/{token}/{payreq}")]
         public async Task<ActionResult<SendResponse>> PayVoucher(string token, string payreq)
         {
@@ -82,7 +89,7 @@ namespace LightningVoucher.Controllers
                     
                     return new SendResponse
                     {
-                        PaymentError = "not enough sat on voucher"
+                        PaymentError = "not enough satoshi on voucher"
                     };
             }
 
@@ -108,7 +115,6 @@ namespace LightningVoucher.Controllers
                 }
                 await _context.SaveChangesAsync();
                 transaction.Commit();
-                Console.WriteLine("IM HERE: " + res.PaymentPreimage.ToStringUtf8());
                 
                 return res;
             }

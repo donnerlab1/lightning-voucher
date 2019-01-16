@@ -4,9 +4,64 @@ const uri = "api/voucher";
 $(document).ready(function() {
 	$("#payment-div").hide();
 	$("#claim-div").hide();
-  //getData();
-});
 
+	$("#get-voucher-div").hide();
+	$("#decode-invoice-button").click(function() {
+		decodePayment();
+	});
+	//getData();
+});
+function decodePayment() {
+	const use_item = {
+		voucher_id: $("#voucher-id").val(),
+		pay_req: $("#voucher-payreq").val()
+	};
+	$.ajax({
+		type: "GET",
+		url: uri + "/decode/" + use_item.pay_req,
+		cache: false,
+		success: function (data) {
+			console.log(data);
+			$("#decode-invoice-stuff").remove();
+			textfield = $("#decode-invoice-text");
+			textfield.show();
+			textfield.append("<span id='decode-invoice-stuff'>" +"Amount: "+ data.numSatoshis+" satoshi Destination: "+ data.destination + "<br>Description: "+ data.description+"</span>");
+			$("#voucher-buy-payreq").val(data.paymentRequest);
+
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+
+			textfield = $("#buy-invoice-text");
+			textfield.show();
+		}
+	});
+}
+function getVoucher() {
+	const use_item = {
+		voucher_id: $("#voucher-id").val(),
+		pay_req: $("#voucher-payreq").val()
+	};
+	$.ajax({
+		type: "GET",
+		url: uri + "/" + use_item.voucher_id,
+		cache: false,
+		success: function (data) {
+			console.log(data);
+			$("#get-voucher-div").show();
+			const tBody = $("#get-voucher-table");
+			$(tBody).empty();
+			restSat = data.startSat - data.usedSat;
+			const tr = $("<tr></tr>")
+				.append($("<td></td>").text(data.id))
+				.append($("<td></td>").text(restSat))
+				.append($("<td></td>").text(data.startSat));
+			tr.appendTo(tBody);
+
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+		}
+	});
+}
 function useVoucher() {
 	const use_item= {
 		voucher_id :$("#voucher-id").val(),
