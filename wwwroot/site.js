@@ -1,22 +1,118 @@
 const uri = "api/voucher";
-let todos = null;
-function getCount(data) {
-  const el = $("#counter");
-  let name = "to-do";
-  if (data) {
-    if (data > 1) {
-      name = "to-dos";
-    }
-    el.text(data + " " + name);
-  } else {
-    el.text("No " + name);
-  }
-}
+
 
 $(document).ready(function() {
+	$("#payment-div").hide();
+	$("#claim-div").hide();
   getData();
 });
 
+function useVoucher() {
+	const use_item= {
+		voucher_id :$("#voucher-id").val(),
+		pay_req : $("#voucher-payreq").val()
+	};
+	$.ajax({
+		type: "GET",
+		url: uri + "/pay/" + use_item.voucher_id + "/" + use_item.pay_req,
+		cache: false,
+		success: function(data) {
+			console.log(data);
+			$("#payment-div").show();
+			const tBody = $("#payment-table");	
+			$(tBody).empty();
+			console.log(window.btoa(data.paymentPreimage))
+			const tr = $("<tr></tr>")
+					.append($("<td></td>").text(data.paymentError))
+					.append($("<td></td>").text(window.btoa(data.paymentPreimage)))
+          
+				;
+			
+			tr.appendTo(tBody);
+
+		},
+		error: function(jqXHR, textStatus, errorThrown) {
+			
+		}
+
+	});
+
+}
+function _arrayBufferToBase64( buffer ) {
+	var binary = '';
+	var bytes = new Uint8Array( buffer );
+	var len = bytes.byteLength;
+	for (var i = 0; i < len; i++) {
+		binary += String.fromCharCode( bytes[ i ] );
+	}
+	return window.btoa( binary );
+}
+
+function buyVoucher() {
+	const buy_item= {
+		buy_amt :$("#buy_amt").val(),
+		buy_sat : $("#buy_sat").val()
+	}
+	$.ajax({
+		type: "GET",
+		url: uri + "/buy/" + buy_item.buy_amt + "/" + buy_item.buy_sat,
+		cache: false,
+		success: function(data) {
+			console.log(data);
+			textfield = $("#buy-invoice-text");
+			textfield.show();
+			textfield.append(data.paymentRequest);
+			$("#voucher-buy-payreq").val(data.paymentRequest);
+
+		},
+		error: function(jqXHR, textStatus, errorThrown) {
+			
+			textfield = $("#buy-invoice-text");
+			textfield.show();
+		}
+
+	});
+}
+
+function claimVoucher() {
+	const claim_item = {
+		claim_payreq: $("#voucher-buy-payreq").val()
+	};
+	$.ajax({
+		type: "GET",
+		url: uri + "/claim/" + claim_item.claim_payreq,
+		cache: false,
+		success: function(data) {
+			console.log(data);
+			if (data.errorCode === "Ok") {
+				$("#claim-div").show();
+				const tBody = $("#voucher-table");
+				$(tBody).empty();
+
+
+				$.each(data.vouchers,
+					function(key, item) {
+						const tr = $("<tr></tr>")
+							.append($("<td></td>").text(item.id));
+
+						tr.appendTo(tBody);
+					});
+			} else {
+				$("#claim-div").show();
+				const tBody = $("#voucher-table");
+				$(tBody).empty();
+				const tr = $("<tr></tr>")
+					.append($("<td></td>").text(data.errorCode));
+
+				tr.appendTo(tBody);
+			}
+		},
+		error: function(jqXHR, textStatus, errorThrown) {
+			$("#claim-div").show();
+		}
+
+	});
+}
 function getData() {
   $.ajax({
     type: "GET",
@@ -24,110 +120,27 @@ function getData() {
     cache: false,
     success: function(data) {
       const tBody = $("#voucher-table");
-
+		
+	    $("#claim-div").show();
+	  console.log(data)
       $(tBody).empty();
 
-      getCount(data.length);
 
       $.each(data, function(key, item) {
+	      restSat = item.startSat - item.usedSat;
         const tr = $("<tr></tr>")
           
           .append($("<td></td>").text(item.id))
-		  
-          .append(
-            $("<td></td>").append(
-              $("<button>Edit</button>").on("click", function() {
-                editItem(item.id);
-              })
-            )
-          )
-          .append(
-            $("<td></td>").append(
-              $("<button>Delete</button>").on("click", function() {
-                deleteItem(item.id);
-              })
-            )
-          );
+		  .append($("<td></td>").text(restSat))
+          
+          ;
 
         tr.appendTo(tBody);
       });
 
-      todos = data;
     }
   });
 }
 
-function GetVoucher() {
-	const item = {
-	
-	}
-}
 
-function addItem() {
-  const item = {
-    name: $("#add-name").val(),
-    isComplete: false
-  };
 
-  $.ajax({
-    type: "POST",
-    accepts: "application/json",
-    url: uri,
-    contentType: "application/json",
-    data: JSON.stringify(item),
-    error: function(jqXHR, textStatus, errorThrown) {
-      alert("Something went wrong!");
-    },
-    success: function(result) {
-      getData();
-      $("#add-name").val("");
-    }
-  });
-}
-
-function deleteItem(id) {
-  $.ajax({
-    url: uri + "/" + id,
-    type: "DELETE",
-    success: function(result) {
-      getData();
-    }
-  });
-}
-
-function editItem(id) {
-  $.each(todos, function(key, item) {
-    if (item.id === id) {
-      $("#edit-name").val(item.name);
-      $("#edit-id").val(item.id);
-      $("#edit-isComplete")[0].checked = item.isComplete;
-    }
-  });
-  $("#spoiler").css({ display: "block" });
-}
-
-$(".my-form").on("submit", function() {
-  const item = {
-    name: $("#edit-name").val(),
-    isComplete: $("#edit-isComplete").is(":checked"),
-    id: $("#edit-id").val()
-  };
-
-  $.ajax({
-    url: uri + "/" + $("#edit-id").val(),
-    type: "PUT",
-    accepts: "application/json",
-    contentType: "application/json",
-    data: JSON.stringify(item),
-    success: function(result) {
-      getData();
-    }
-  });
-
-  closeInput();
-  return false;
-});
-
-function closeInput() {
-  $("#spoiler").css({ display: "none" });
-}

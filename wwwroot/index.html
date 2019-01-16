@@ -32,38 +32,57 @@
 <body>
 <h1>Lightning-Voucher</h1>
 
-<div>
-	<h3>Buy Voucher</h3>
-	<form action="javascript:void(0);" method="POST" onsubmit="addVoucher()">
-		<input type="text" id="voucher-amt" placeholder="Voucher Amount">
-		<input type="text" id="voucher-sat" placeholder="Satoshi per Voucher">
-		<input type="submit" value="Add">
+<div id="use-voucher">
+	<h3>Use Voucher</h3>
+	<form action="javascript:void(0);" method="GET" onsubmit="useVoucher()">
+		<input type="text" id="voucher-id" placeholder="Voucher Id">
+		<input type="text" id="voucher-payreq" placeholder="Payment Request">
+		<input type="submit" value="Pay">
 	</form>
-
-</div>
-
-<div id="spoiler">
-	<h3>Edit</h3>
-	<form class="my-form">
-		<input type="hidden" id="edit-id">
-		<input type="checkbox" id="edit-isComplete">
-		<input type="text" id="edit-name">
-		<input type="submit" value="Save">
-		<a onclick="closeInput()" aria-label="Close">&#10006;</a>
-	</form>
+	<div id="payment-div">
+	<table>
+		<tr>
+			<th>Error Code</th>
+			<th>PreImage</th>
+		</tr>
+		<tbody id="payment-table"></tbody>
+	</table>
+	</div>
+	<text type="hidden" id="buy-invoice">
 </div>
 
 <div id="buy-voucher">
+	<h3>Buy Voucher</h3>
+	<form action="javascript:void(0);" method="GET" onsubmit="buyVoucher()">
+		<input type="text" id="buy_amt" placeholder="Voucher Amount">
+		<input type="text" id="buy_sat" placeholder="Satoshi per Voucher">
+		<input type="submit" value="Buy">
+	</form>
+	<text type="hidden" id="buy-invoice-text">
+	
+	<div id="buy-invoice-text">
+
+	</div>
+
+</div>
+
+
+<div id="claim-voucher">
+	<h3>Claim Voucher</h3>
+	<form action="javascript:void(0);" method="GET" onsubmit="claimVoucher()">
+		<input type="text" id="voucher-buy-payreq" placeholder="Payreq">
+		<input type="submit" value="Claim">
+	</form>
+<div id="claim-div">
 	<table>
 		<tr>
-			<th>Voucher</th>
-			<th></th>
-			<th></th>
+			<th>Vouchers</th>
+			<th>Remaing Satoshi</th>
 		</tr>
 		<tbody id="voucher-table"></tbody>
 	</table>
 </div>
-<form id="rendered-form"><div class="rendered-form"><div class="fb-number form-group field-number-1547590289538"><label for="number-1547590289538" class="fb-number-label">Number of Vouchers</label><input type="number" class="form-control" name="number-1547590289538" min="1" step="1" id="number-1547590289538"></div><div class="fb-number form-group field-sat-amount-field"><label for="sat-amount-field" class="fb-number-label">Sat Amount per Voucher<span class="fb-required">*</span></label><input type="number" class="form-control" name="sat-amount-field" value="sat-amount" min="1" step="1" id="sat-amount-field" required="required" aria-required="true"></div><div class="fb-button form-group field-request-vouchers-button"><button type="button" name="request-vouchers-button" value="request-vouchers" id="request-vouchers-button">Request Vouchers</button></div></div></form>
+</div>
 
 <p id="counter"></p>
 

@@ -10,7 +10,7 @@ namespace LightningVoucher.ln
 {
     public interface ILightning
     {
-        Task<string> SendPayment(string payreq);
+        Task<SendResponse> SendPayment(string payreq);
         Task<bool> ValidatePayment(string payreq, string preimage);
         Task<long> SatCost(string payreq);
         Task<Invoice> GetPayReq(long amt);
@@ -21,9 +21,9 @@ namespace LightningVoucher.ln
     {
         private static int counter = 0;
 
-        public Task<string> SendPayment(string payreq)
+        public Task<SendResponse> SendPayment(string payreq)
         {
-            return Task.FromResult("preimageyo " + payreq);
+            return Task.FromResult(new SendResponse());
         }
 
         public Task<bool> ValidatePayment(string payreq, string preimage)

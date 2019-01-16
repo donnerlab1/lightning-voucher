@@ -40,14 +40,13 @@ namespace LightningVoucher.ln
             Console.WriteLine(getinfo.ToString());
 
         }
-        public async Task<string> SendPayment(string payreq)
+        public async Task<SendResponse> SendPayment(string payreq)
         {
             var s = await client.SendPaymentSyncAsync(new SendRequest {PaymentRequest = payreq});
-            if (s.PaymentError != "")
-                return s.PaymentError;
-            return s.PaymentPreimage.ToString();
+            return s;
         }
 
+       
         public async Task<Invoice> GetPayReq(long amt)
         {
             var payreq = await client.AddInvoiceAsync(new Invoice
@@ -63,14 +62,22 @@ namespace LightningVoucher.ln
 
         public async Task<bool> ValidatePayment(string payreq, string preimage)
         {
+
             var payReq = await client.DecodePayReqAsync(new PayReqString
             {
                 PayReq = payreq
             });
-            var pHash = payReq.PaymentHash;
-            if (Util.CheckPreImage(pHash, preimage))
+            var lookup = await client.LookupInvoiceAsync(new PaymentHash
+            {
+                RHashStr = payReq.PaymentHash
+            });
+            if (lookup.Settled)
+            {
+                Console.WriteLine("invoice settled");
                 return true;
-            return true;
+            }
+
+            return false;
         }
 
         public async Task<long> SatCost(string payreq)

@@ -54,7 +54,7 @@ namespace LightningVoucher.Controllers
         }
 
         [HttpGet("/api/[controller]/pay/{token}/{payreq}")]
-        public async Task<ActionResult<String>> PayVoucher(string token, string payreq)
+        public async Task<ActionResult<SendResponse>> PayVoucher(string token, string payreq)
         {
             var voucherItem = await _context.VoucherItems.FindAsync(token);
 
@@ -62,26 +62,42 @@ namespace LightningVoucher.Controllers
             {
                 return NotFound();
             }
-           using(var transaction = _context.Database.BeginTransaction())
-            {
+           
                 var cost = await _lightning.SatCost(payreq);
                 if (cost > voucherItem.StartSat - voucherItem.UsedSat)
                 {
-                    return "Error: not enough sat on voucher";
-                }
+                    
+                    return new SendResponse
+                    {
+                        PaymentError = "not enough sat on voucher"
+                    };
+            }
 
-                if (cost == voucherItem.StartSat - voucherItem.UsedSat)
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+
+
+                var res = await _lightning.SendPayment(payreq);
+                if (res.PaymentError != "")
                 {
-                    _context.Entry(voucherItem).State = EntityState.Deleted;
-                    await _context.SaveChangesAsync();
-                    return await _lightning.SendPayment(payreq);
+
+                    _context.Entry(voucherItem).State = EntityState.Unchanged;
+                    return res;
                 }
 
                 voucherItem.UsedSat += cost;
                 _context.Entry(voucherItem).State = EntityState.Modified;
+
+                if (cost == voucherItem.StartSat - voucherItem.UsedSat)
+                {
+
+                    _context.Entry(voucherItem).State = EntityState.Deleted;
+                }
                 await _context.SaveChangesAsync();
                 transaction.Commit();
-                return await _lightning.SendPayment(payreq);
+                Console.WriteLine("IM HERE: " + res.PaymentPreimage.ToStringUtf8());
+                
+                return res;
             }
         }
 
@@ -94,11 +110,11 @@ namespace LightningVoucher.Controllers
             return payReq;
         }
 
-        [HttpGet("/api/[controller]/claim/{preimage}/{payreq}")]
-        public async Task<ActionResult<ClaimVoucherResponse>> ClaimVoucherInvoice(string preimage, string payreq)
+        [HttpGet("/api/[controller]/claim/{payreq}")]
+        public async Task<ActionResult<ClaimVoucherResponse>> ClaimVoucherInvoice(string payreq)
         {
             var voucherBuyItem = await _context.VoucherBuyItems.FindAsync(payreq);
-            
+
             var response = new ClaimVoucherResponse();
             if (voucherBuyItem == null)
             {
@@ -107,25 +123,32 @@ namespace LightningVoucher.Controllers
 
 
 
-            if (await _lightning.ValidatePayment(payreq, preimage))
-            {
-                response.ErrorCode = "Ok";
-                for (int i = 0; i < voucherBuyItem.Amount; i++)
-                {
-                    var voucher =_context.VoucherItems.Add(new VoucherItem() {StartSat = voucherBuyItem.SatPerVoucher }).Entity;
-                    response.Vouchers.Add(voucher);
-
-                }
-                
-                _context.SaveChanges();
-            }
             else
             {
-                response.ErrorCode = "Payment not valid";
-               
-            }
+                if (await _lightning.ValidatePayment(payreq, ""))
+                {
+                    response.ErrorCode = "Ok";
+                    for (int i = 0; i < voucherBuyItem.Amount; i++)
+                    {
+                        var voucher = _context.VoucherItems
+                            .Add(new VoucherItem() {StartSat = voucherBuyItem.SatPerVoucher}).Entity;
+                        response.Vouchers.Add(voucher);
 
-            return response;
+                    }
+                    _context.Entry(voucherBuyItem).State = EntityState.Deleted;
+                    
+                    _context.SaveChanges();
+                }
+                else
+                {
+                    response.ErrorCode = "Payment not valid";
+
+                }
+
+            }
+        
+    
+        return response;
         }
 
 

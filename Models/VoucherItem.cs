@@ -14,10 +14,10 @@ namespace LightningVoucher.Models {
 
         
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public DateTime Created{get;set;} = DateTime.UtcNow;
+        public Nullable<DateTime> Created{get;set;} = DateTime.UtcNow;
 
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public DateTime LastUsed { get; set; } = DateTime.UtcNow;
+        public Nullable<DateTime> LastUsed { get; set; } = DateTime.UtcNow;
 
 
     }

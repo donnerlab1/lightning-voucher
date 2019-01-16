@@ -29,17 +29,19 @@ namespace LightningVoucher
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //var connection = "Data Source=vouchers.db";
-            //services.AddDbContext<VoucherContext>(options => options.UseSqlite(connection));
+            var connection = "Data Source=vouchers.db";
+            services.AddDbContext<VoucherContext>(options => options.UseSqlite(connection));
            
             
            // var lightning = new LndGrpcService(rpc, cert, hex);
 
            
-            services.AddDbContext<VoucherContext>(opt =>
-                opt.UseInMemoryDatabase("VoucherList"));
+            //services.AddDbContext<VoucherContext>(opt =>
+             //   opt.UseInMemoryDatabase("VoucherList"));
             services.AddSingleton<ILightning, LndGrpcService>();
-           // services.AddTransient(services.Configure<LndGrpcService>(Configuration), typeof(ILightning));
+
+            
+            // services.AddTransient(services.Configure<LndGrpcService>(Configuration), typeof(ILightning));
             //services.AddTransient<ILightning, >();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
