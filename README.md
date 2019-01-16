@@ -1,5 +1,7 @@
 # lightning-voucher
 
+simple voucher system for lnd. 
+
 ## usage
 
 place tls.cert and admin macaroon in application folder

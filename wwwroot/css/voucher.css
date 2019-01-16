@@ -1,0 +1,36 @@
+
+.container {
+    max-width: 800px;
+    padding: 1em;
+}
+
+.centered {
+    text-align: center;
+}
+
+.super {
+    margin: 10vh 0 10vh 0;
+    font-size: 1.5em;
+    text-align: center;
+}
+
+.hero {
+    padding: 1em;
+    text-align: center;
+}
+
+h1 {
+    font-size: 1.8em;
+    margin-bottom: 0;
+}
+
+h2 {
+    font-size: 1.4em;
+    font-weight: bold;
+}
+
+h3 {
+    font-size: 1.3em;
+    font-weight: bold;
+}
+

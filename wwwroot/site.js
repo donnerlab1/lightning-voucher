@@ -4,7 +4,7 @@ const uri = "api/voucher";
 $(document).ready(function() {
 	$("#payment-div").hide();
 	$("#claim-div").hide();
-  getData();
+  //getData();
 });
 
 function useVoucher() {
@@ -93,6 +93,8 @@ function claimVoucher() {
 
 				$.each(data.vouchers,
 					function(key, item) {
+						
+						restSat = item.startSat - item.usedSat;
 						const tr = $("<tr></tr>")
 							.append($("<td></td>").text(item.id))
 							.append($("<td></td>").text(restSat));

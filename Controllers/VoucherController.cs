@@ -45,12 +45,12 @@ namespace LightningVoucher.Controllers
             }
         }
 
-
+        /*
         [HttpGet]
         public async Task<ActionResult<IEnumerable<VoucherItem>>> GetVoucherItems()
         {
             return await _context.VoucherItems.ToListAsync();
-        }
+        }*/
 
         // GET: api/Todo/5
         [HttpGet("{token}")]

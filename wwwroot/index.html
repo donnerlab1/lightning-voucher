@@ -2,36 +2,19 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>To-do CRUD</title>
-	<style>
-        input[type='submit'], button, [aria-label] {
-            cursor: pointer;
-        }
-
-        #spoiler {
-            display: none;
-        }
-
-        table {
-            font-family: Arial, sans-serif;
-            border: 1px solid;
-            border-collapse: collapse;
-        }
-
-        th {
-            background-color: 	white;
-            color: black;
-        }
-
-        td {
-            border: 1px solid;
-            padding: 5px;
-        }
-    </style>
+	<title>lightning voucher</title>
+	<meta content="width=device-width, initial-scale=1" name="viewport">
+	<link href="/css/normalize.css" rel="stylesheet">
+	<link href="/css/skeleton.css" rel="stylesheet">
+	<link href="/css/voucher.css" rel="stylesheet">
+	<link href="/css/font.css" type="text/css" rel="stylesheet">
 </head>
-<body>
-<h1>Lightning-Voucher</h1>
-
+<body style>
+<div class="hero">
+	<p><h1>Lightning-Voucher</h1></p>
+	
+</div>
+<div class="centered">
 <div id="use-voucher">
 	<h3>Use Voucher</h3>
 	<form action="javascript:void(0);" method="GET" onsubmit="useVoucher()">
@@ -40,13 +23,13 @@
 		<input type="submit" value="Pay">
 	</form>
 	<div id="payment-div">
-	<table>
-		<tr>
-			<th>Error Code</th>
-			<th>PreImage</th>
-		</tr>
-		<tbody id="payment-table"></tbody>
-	</table>
+		<table>
+			<tr>
+				<th>Error Code</th>
+				<th>PreImage</th>
+			</tr>
+			<tbody id="payment-table"></tbody>
+		</table>
 	</div>
 	<text type="hidden" id="buy-invoice">
 </div>
@@ -59,7 +42,7 @@
 		<input type="submit" value="Buy">
 	</form>
 	<text type="hidden" id="buy-invoice-text">
-	
+
 	<div id="buy-invoice-text">
 
 	</div>
@@ -73,18 +56,18 @@
 		<input type="text" id="voucher-buy-payreq" placeholder="Payment Request">
 		<input type="submit" value="Get">
 	</form>
-<div id="claim-div">
-	<table>
-		<tr>
-			<th>Vouchers</th>
-			<th>Remaing Satoshi</th>
-		</tr>
-		<tbody id="voucher-table"></tbody>
-	</table>
+	<div id="claim-div">
+		<table align="center" >
+			<tr>
+				<th>Vouchers</th>
+				<th>Remaing Satoshi</th>
+			</tr>
+			<tbody id="voucher-table"></tbody>
+		</table>
+	</div>
 </div>
 </div>
 
-<p id="counter"></p>
 
 
 
