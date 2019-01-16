@@ -8,7 +8,7 @@ $(document).ready(function() {
 	$("#decode-invoice-button").click(function() {
 		decodePayment();
 	});
-	$("#buylink").attr("href", window.location.origin+"");
+	$("#buylink").attr("href", window.location.origin+"/voucher/");
 	getVoucher();
 	//getData();
 });
