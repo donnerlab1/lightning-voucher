@@ -18,6 +18,8 @@ namespace LightningVoucher.ln
 
         public static uint feePercentage;
 
+        private GetInfoResponse getInfo;
+
         public LndGrpcService(IConfiguration config)
         {
             /*
@@ -39,12 +41,14 @@ namespace LightningVoucher.ln
 
             client = new Lightning.LightningClient(lndChannel);
 
-            var getinfo = client.GetInfo(new GetInfoRequest());
-            Console.WriteLine(getinfo.ToString());
+            getInfo = client.GetInfo(new GetInfoRequest());
+            Console.WriteLine(getInfo.ToString());
 
         }
         public async Task<SendResponse> SendPayment(string payreq)
         {
+
+            Console.Write("LIGHTNINGLOG: SendPayment " + payreq);
             var s = await client.SendPaymentSyncAsync(new SendRequest {PaymentRequest = payreq});
             
             return s;
@@ -52,6 +56,7 @@ namespace LightningVoucher.ln
 
         public async Task<PayReq> DecodePayReq(string payreq)
         {
+            Console.Write("LIGHTNINGLOG: DecodePayReq " + payreq);
             var s = await client.DecodePayReqAsync(new PayReqString
             {
                 PayReq = payreq
@@ -61,12 +66,14 @@ namespace LightningVoucher.ln
 
         public uint getFee()
         {
+            Console.Write("LIGHTNINGLOG: GetFee ");
             return feePercentage;
         }
 
        
         public async Task<Invoice> GetPayReq(ulong amt)
         {
+            Console.Write("LIGHTNINGLOG: GetPayReq " + amt);
             long fee = (long) (amt * (feePercentage/100f));
             if (fee < 1 && feePercentage != 0)
                 fee = 1;
@@ -83,7 +90,7 @@ namespace LightningVoucher.ln
 
         public async Task<bool> ValidatePayment(string payreq, string preimage)
         {
-
+            Console.Write("LIGHTNINGLOG: ValidatePayment " + payreq + " " + preimage);
             var payReq = await client.DecodePayReqAsync(new PayReqString
             {
                 PayReq = payreq
@@ -103,6 +110,7 @@ namespace LightningVoucher.ln
 
         public async Task<ulong> SatCost(string payreq)
         {
+            Console.Write("LIGHTNINGLOG: SatCost " + payreq);
             var decode = await client.DecodePayReqAsync(new PayReqString
             {
                 PayReq = payreq
@@ -113,6 +121,8 @@ namespace LightningVoucher.ln
 
         public bool VerifyMessage(string pubkey, string message)
         {
+            Console.Write("LIGHTNINGLOG: VerifyMessage " + pubkey + " " + message);
+
             var response = client.VerifyMessage(new Lnrpc.VerifyMessageRequest
             {
                 Msg = ByteString.CopyFromUtf8(pubkey),
@@ -124,8 +134,12 @@ namespace LightningVoucher.ln
                 return false;
         }
 
+        public Task<GetInfoResponse> GetInfo()
+        {
 
-        
+            Console.Write("LIGHTNINGLOG: GetInfo ");
+            return Task.FromResult(this.getInfo);
+        }
     }
     public static class Util
     {
@@ -180,5 +194,7 @@ namespace LightningVoucher.ln
             //Or the two combined, but a bit slower:
             return val - (val < 58 ? 48 : (val < 97 ? 55 : 87));
         }
+
+        
     }
 }

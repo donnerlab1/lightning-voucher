@@ -56,6 +56,8 @@ namespace LightningVoucher.Controllers
         [HttpGet("{token}")]
         public async Task<ActionResult<VoucherItem>> GetVoucherI(string token)
         {
+
+            Console.Write("CONTROLLERLOG: GetVoucherI " + token);
             var voucherItem = await _context.VoucherItems.FindAsync(token);
 
             if (voucherItem == null)
@@ -69,6 +71,8 @@ namespace LightningVoucher.Controllers
         [HttpGet("/api/[controller]/decode/{payreq}")]
         public async Task<ActionResult<PayReq>> DecodePayReq(string payreq)
         {
+
+            Console.Write("CONTROLLERLOG: DecodePayReq " + payreq);
             var payReq = await _lightning.DecodePayReq(payreq);
             return payReq;
         }
@@ -76,6 +80,8 @@ namespace LightningVoucher.Controllers
         [HttpGet("/api/[controller]/pay/{token}/{payreq}")]
         public async Task<ActionResult<SendResponse>> PayVoucher(string token, string payreq)
         {
+
+            Console.Write("CONTROLLERLOG: PayVoucher " + token + " " + payreq);
             var voucherItem = await _context.VoucherItems.FindAsync(token);
 
             if (voucherItem == null)
@@ -83,20 +89,20 @@ namespace LightningVoucher.Controllers
                 return NotFound();
             }
            
-                var cost = await _lightning.SatCost(payreq);
-                if (cost > voucherItem.StartSat - voucherItem.UsedSat)
-                {
-                    
-                    return new SendResponse
-                    {
-                        PaymentError = "not enough satoshi on voucher"
-                    };
-            }
+                
 
             using (var transaction = _context.Database.BeginTransaction())
             {
 
+                var cost = await _lightning.SatCost(payreq);
+                if (cost > voucherItem.StartSat - voucherItem.UsedSat)
+                {
 
+                    return new SendResponse
+                    {
+                        PaymentError = "not enough satoshi on voucher"
+                    };
+                }
                 var res = await _lightning.SendPayment(payreq);
                 if (res.PaymentError != "")
                 {
@@ -124,6 +130,8 @@ namespace LightningVoucher.Controllers
         [HttpGet("/api/[controller]/buy/{amt}/{satPerVoucher}")]
         public async Task<ActionResult<Invoice>> GetVoucherInvoice(uint amt, ulong satPerVoucher)
         {
+
+            Console.Write("CONTROLLERLOG: GetVoucherInvoice " + amt + " " + satPerVoucher);
             if (amt > 10 || satPerVoucher > 100)
                 return new Invoice {PaymentRequest = "ERROR: amount and satoshi per voucher is capped at 100"};
             var payReq = await _lightning.GetPayReq(amt * satPerVoucher);
@@ -132,14 +140,18 @@ namespace LightningVoucher.Controllers
             return payReq;
         }
         [HttpGet("/api/[controller]/buy/fee/")]
-        public async Task<ActionResult<FeeResponse>> GetFee()
+        public ActionResult<FeeResponse> GetFee()
         {
+            Console.Write("CONTROLLERLOG: GetFee ");
+
             return new FeeResponse {fee = _lightning.getFee()};
         }
 
         [HttpGet("/api/[controller]/claim/{payreq}")]
         public async Task<ActionResult<ClaimVoucherResponse>> ClaimVoucherInvoice(string payreq)
         {
+
+            Console.Write("CONTROLLERLOG: ClaimVoucherInvoice " + payreq);
             var voucherBuyItem = await _context.VoucherBuyItems.FindAsync(payreq);
 
             var response = new ClaimVoucherResponse();

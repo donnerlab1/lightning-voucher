@@ -13,46 +13,12 @@
 <div class="hero">
 	<p><h1>Lightning-Voucher</h1></p>
 	<p class="reckless">HIGHLY EXPERIMENTAL USE WITH CAUTION, YOUR FUNDS MAY GET LOST</p>
-	<p>Use Vouchers to easily pay for lightning invoices. Buy Vouchers and give them out for easy Onboarding.</p>
-	<p>To pay: 1. paste your voucher-id in the Voucher Id textfield; 2. paste the Payment Request in the Payment Request</p>
+	<p>Buy Vouchers to pay for payment requests in the Lightning-Network and share them.</p>
 </div>
 <div class="centered">
-	<div id="use-voucher">
-		<h3>Use Voucher</h3>
-		<form action="javascript:void(0);" method="GET" onsubmit="getVoucher()">
-			<input type="text" id="voucher-id" placeholder="Voucher Id">
-			<input type="submit" value="Show">
-		</form><div id="get-voucher-div">
-			<table align="center" >
-				<tr>
-					<th>Voucher</th>
-					<th>Remaining Satoshi</th>
-					<th>Starting Satoshi</th>
-				</tr>
-				<tbody id="get-voucher-table"></tbody>
-			</table>
-		</div>
-			<form action="javascript:void(0);" method="GET" onsubmit="useVoucher()">
-				<input type="text" id="voucher-payreq" placeholder="Payment Request">
-				<input type="button" id="decode-invoice-button" value="Decode">
-				<input type="submit"  value="Pay">
-			</form><div id="decode-invoice-text">
-
-			</div>
-				<div id="payment-div">
-					<table align="center">
-						<tr>
-							<th>Status Code</th>
-							<th>Total Cost</th>
-						</tr>
-						<tbody id="payment-table"></tbody>
-					</table>
-				</div>
-				<text type="hidden" id="buy-invoice">
-</div>
-
+	
 <div id="buy-voucher">
-	<h3 id="fee-text">Buy Voucher (Fee: )</h3>
+	<h3 id="fee-text">Buy Vouchers (fee:  @ViewData["Fee"])</h3>
 	<form action="javascript:void(0);" method="GET" onsubmit="buyVoucher()">
 		<input type="text" id="buy_amt" placeholder="Voucher Amount">
 		<input type="text" id="buy_sat" placeholder="Satoshi per Voucher">
@@ -81,6 +47,7 @@
 			<tbody id="voucher-table"></tbody>
 		</table>
 	</div>
+	<p>Node: @ViewData["Channel"]</p>
 </div>
 </div>
 
@@ -90,6 +57,6 @@
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"
         integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
         crossorigin="anonymous"></script>
-<script src="site.js"></script>
+<script src="buy.js"></script>
 </body>
 </html>

@@ -3,31 +3,16 @@ const uri = "api/voucher";
 
 $(document).ready(function() {
 	$("#payment-div").hide();
-	$("#claim-div").hide();
 
 	$("#get-voucher-div").hide();
 	$("#decode-invoice-button").click(function() {
 		decodePayment();
 	});
-	getFee();
+	$("#buylink").attr("href", window.location.origin+"");
+	getVoucher();
 	//getData();
 });
 
-function getFee() {
-	$.ajax({
-		type: "GET",
-		url: uri + "/buy/fee",
-		cache: false,
-		success: function (data) {
-			console.log(data);
-			$("#fee-text").text("Buy Voucher (Fee: " + data.fee + "%)");
-
-		},
-		error: function (jqXHR, textStatus, errorThrown) {
-
-		}
-	});
-}
 function decodePayment() {
 	const use_item = {
 		voucher_id: $("#voucher-id").val(),
@@ -55,7 +40,7 @@ function decodePayment() {
 }
 function getVoucher() {
 	const use_item = {
-		voucher_id: $("#voucher-id").val(),
+		voucher_id: $("#voucher-id").text(),
 		pay_req: $("#voucher-payreq").val()
 	};
 	$.ajax({
@@ -80,16 +65,22 @@ function getVoucher() {
 	});
 }
 function useVoucher() {
+	$("#decode-invoice-stuff").remove();
+	textfield = $("#decode-invoice-text");
+	textfield.show();
+	textfield.append("<span id='decode-invoice-stuff' style='color:red'>PAYING, Standby</span>");
 	const use_item= {
-		voucher_id :$("#voucher-id").val(),
+		voucher_id: $("#voucher-id").text(),
 		pay_req : $("#voucher-payreq").val()
 	};
 	$.ajax({
 		type: "GET",
 		url: uri + "/pay/" + use_item.voucher_id + "/" + use_item.pay_req,
 		cache: false,
-		success: function(data) {
-			console.log("USE: " + data);
+		success: function (data) {
+
+			$("#decode-invoice-stuff").remove();
+			console.log(data);
 			$("#payment-div").show();
 			const tBody = $("#payment-table");	
 			$(tBody).empty();
@@ -108,6 +99,7 @@ function useVoucher() {
 						tr.append($("<td></td>").text(data.paymentError))
 
 						.append($("<td></td>").text(data.paymentRoute.totalAmt))
+				.append($("<td></td>").text(data.paymentRoute.totalFees))
 
 					;
 			}
