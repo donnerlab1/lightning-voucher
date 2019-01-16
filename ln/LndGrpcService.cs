@@ -47,11 +47,11 @@ namespace LightningVoucher.ln
         }
 
        
-        public async Task<Invoice> GetPayReq(long amt)
+        public async Task<Invoice> GetPayReq(ulong amt)
         {
             var payreq = await client.AddInvoiceAsync(new Invoice
             {
-                Value = amt
+                Value = (long)amt
             });
             var res = await client.LookupInvoiceAsync(new PaymentHash
             {
@@ -80,13 +80,13 @@ namespace LightningVoucher.ln
             return false;
         }
 
-        public async Task<long> SatCost(string payreq)
+        public async Task<ulong> SatCost(string payreq)
         {
             var decode = await client.DecodePayReqAsync(new PayReqString
             {
                 PayReq = payreq
             });
-            return decode.NumSatoshis;
+            return (ulong) decode.NumSatoshis;
         }
 
 

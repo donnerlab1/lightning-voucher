@@ -115,7 +115,7 @@ namespace LightningVoucher.Controllers
         }
 
         [HttpGet("/api/[controller]/buy/{amt}/{satPerVoucher}")]
-        public async Task<ActionResult<Invoice>> GetVoucherInvoice(int amt, long satPerVoucher)
+        public async Task<ActionResult<Invoice>> GetVoucherInvoice(uint amt, ulong satPerVoucher)
         {
             var payReq = await _lightning.GetPayReq(amt * satPerVoucher);
             var buyItem = _context.VoucherBuyItems.Add(new VoucherBuyItem() { Id = payReq.PaymentRequest, Amount = amt, SatPerVoucher = satPerVoucher, claimed = false}).Entity;

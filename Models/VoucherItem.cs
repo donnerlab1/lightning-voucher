@@ -8,9 +8,9 @@ namespace LightningVoucher.Models {
         public string Id {get;set;}
 
 
-        public long UsedSat { get; set; }
+        public ulong UsedSat { get; set; }
 
-        public long StartSat{get;set;}
+        public ulong StartSat{get;set;}
 
         
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

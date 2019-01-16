@@ -9,8 +9,8 @@ namespace LightningVoucher.Models
     {
         public string Id { get; set; }
 
-        public int Amount { get; set; }
-        public long SatPerVoucher { get; set; }
+        public uint Amount { get; set; }
+        public ulong SatPerVoucher { get; set; }
         public bool claimed { get; set; }
 
         public ICollection<VoucherItem> Vouchers { get; set; } = new List<VoucherItem>();

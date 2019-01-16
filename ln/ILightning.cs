@@ -12,8 +12,8 @@ namespace LightningVoucher.ln
     {
         Task<SendResponse> SendPayment(string payreq);
         Task<bool> ValidatePayment(string payreq, string preimage);
-        Task<long> SatCost(string payreq);
-        Task<Invoice> GetPayReq(long amt);
+        Task<ulong> SatCost(string payreq);
+        Task<Invoice> GetPayReq(ulong amt);
     }
 
     public class DemoLightning : ILightning
@@ -31,15 +31,15 @@ namespace LightningVoucher.ln
             return Task.FromResult(true);
         }
 
-        public Task<long> SatCost(string payreq)
+        public Task<ulong> SatCost(string payreq)
         {
-            return Task.FromResult(1L);
+            return Task.FromResult(1UL);
         }
 
-        public Task<Invoice> GetPayReq(long amt)
+        public Task<Invoice> GetPayReq(ulong amt)
         {
             counter += 1;
-            return Task.FromResult(new Invoice{PaymentRequest = "payreq"+counter, Value = amt} );
+            return Task.FromResult(new Invoice{PaymentRequest = "payreq"+counter, Value = (long)amt} );
         }
     }
 }
