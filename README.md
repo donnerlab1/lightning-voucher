@@ -1,4 +1,4 @@
-# lightning-voucher
+# lightning voucher
 
 HIGHLY EXPERIMENTAL
 
