@@ -1,5 +1,7 @@
 # lightning-voucher
 
+HIGHLY EXPERIMENTAL
+
 simple voucher system for lnd. 
 
 ## usage
