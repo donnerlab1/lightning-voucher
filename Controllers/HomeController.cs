@@ -22,7 +22,7 @@ namespace LightningVoucher.Controllers
         }
         public async Task<ActionResult> Index(string id)
         {
-            Console.Write("CONTROLLERLOG: INDEX " + id);
+            Console.WriteLine("CONTROLLERLOG: INDEX " + id);
             var getInfo = await _lightning.GetInfo();
             var channelString = getInfo.IdentityPubkey + ":9735";
             ViewData["Channel"] = channelString;
@@ -33,7 +33,7 @@ namespace LightningVoucher.Controllers
         [Route("/{voucher}")]
         public ActionResult GetIndexVoucher(string voucher)
         {
-            Console.Write("CONTROLLERLOG: HOMEVOUCHER " + voucher);
+            Console.WriteLine("CONTROLLERLOG: HOMEVOUCHER " + voucher);
             ViewData["VoucherId"] = voucher;
             return View("Voucher");
         }
