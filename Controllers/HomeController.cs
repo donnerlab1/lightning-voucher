@@ -24,7 +24,9 @@ namespace LightningVoucher.Controllers
         {
             Console.WriteLine("CONTROLLERLOG: INDEX " + id);
             var getInfo = await _lightning.GetInfo();
-            var channelString = getInfo.IdentityPubkey + ":9735";
+            var channelString = getInfo.IdentityPubkey;
+            if(getInfo.Uris.Count>0)
+                channelString = getInfo.Uris[0];
             ViewData["Channel"] = channelString;
             ViewData["Fee"] = _lightning.getFee().ToString() + "%";
             return View();
