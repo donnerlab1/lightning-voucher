@@ -61,6 +61,12 @@ function getVoucher() {
 
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
+			$("#get-voucher-div").show();
+			const tBody = $("#get-voucher-table");
+			$(tBody).empty();
+			const tr = $("<tr></tr>")
+				.append($("<td style='color:red'></td>").text("VOUCHER NOT FOUND OR SPENT"))
+			tr.appendTo(tBody);
 		}
 	});
 }
