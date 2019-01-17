@@ -105,9 +105,8 @@ function useVoucher() {
 						tr.append($("<td></td>").text(data.paymentError))
 
 						.append($("<td></td>").text(data.paymentRoute.totalAmt))
-				.append($("<td></td>").text(data.paymentRoute.totalFees))
-
-					;
+						.append($("<td></td>").text(data.paymentRoute.totalFees));
+						getVoucher();
 			}
 			
 			
