@@ -71,7 +71,11 @@ function getVoucher() {
 	});
 }
 function useVoucher() {
-	$("#decode-invoice-stuff").remove();
+    $("#decode-invoice-stuff").remove();
+    const voucher_button = $("#use-voucher-button");
+    console.log(voucher_button)
+    voucher_button.attr("disabled", "disabled")
+    voucher_button.attr('value', "Please Wait...");
 	textfield = $("#decode-invoice-text");
 	textfield.show();
 	textfield.append("<span id='decode-invoice-stuff' style='color:red'>PAYING, Standby</span>");
@@ -84,7 +88,8 @@ function useVoucher() {
 		url: uri + "/pay/" + use_item.voucher_id + "/" + use_item.pay_req,
 		cache: false,
 		success: function (data) {
-
+		    voucher_button.removeAttr("disabled");
+		    voucher_button.attr('value', "Pay");
 			$("#decode-invoice-stuff").remove();
 			console.log(data);
 			$("#payment-div").show();
@@ -101,7 +106,8 @@ function useVoucher() {
 
 					;
 			} else {
-
+			    voucher_button.removeAttr("disabled");
+			    voucher_button.attr('value', "Pay");
 						tr.append($("<td></td>").text(data.paymentError))
 
 						.append($("<td></td>").text(data.paymentRoute.totalAmt))
@@ -114,7 +120,8 @@ function useVoucher() {
 
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
-			
+		    voucher_button.removeAttr("disabled");
+		    voucher_button.attr('value', "Pay");
 		}
 
 	});
