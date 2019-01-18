@@ -122,6 +122,7 @@ function useVoucher() {
 		error: function(jqXHR, textStatus, errorThrown) {
 		    voucher_button.removeAttr("disabled");
 		    voucher_button.attr('value', "Pay");
+		    $("#decode-invoice-stuff").remove();
 		}
 
 	});
