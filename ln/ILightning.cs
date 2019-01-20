@@ -17,6 +17,7 @@ namespace LightningVoucher.ln
         Task<PayReq> DecodePayReq(string payreq);
         Task<GetInfoResponse> GetInfo();
         uint getFee();
+        ulong getMaxSat();
     }
 
     public class DemoLightning : ILightning
@@ -56,6 +57,11 @@ namespace LightningVoucher.ln
         }
 
         public Task<GetInfoResponse> GetInfo()
+        {
+            throw new NotImplementedException();
+        }
+
+        public ulong getMaxSat()
         {
             throw new NotImplementedException();
         }

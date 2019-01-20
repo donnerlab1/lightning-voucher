@@ -18,6 +18,7 @@ namespace LightningVoucher.ln
         public Lightning.LightningClient client;
 
         public static uint feePercentage;
+        public static ulong maxSatPerPayment;
 
         private GetInfoResponse getInfo;
 
@@ -35,7 +36,7 @@ namespace LightningVoucher.ln
             var hexMac = Util.ToHex(File.ReadAllBytes(directory + "/admin.macaroon"));
             var rpc = config.GetValue<string>("rpc");
             feePercentage = config.GetValue<uint>("fee");
-
+            maxSatPerPayment = 500;
             var macaroonCallCredentials = new MacaroonCallCredentials(hexMac);
             var channelCreds = ChannelCredentials.Create(new SslCredentials(tls), macaroonCallCredentials.credentials);
             var lndChannel = new Grpc.Core.Channel(rpc, channelCreds);
@@ -51,7 +52,7 @@ namespace LightningVoucher.ln
 
             Console.WriteLine("LIGHTNINGLOG: SendPayment " + payreq);
             var payment = await DecodePayReq(payreq);
-            if (payment.NumSatoshis > 100)
+            if (payment.NumSatoshis > (long) maxSatPerPayment)
             {
 
                 return new SendResponse
@@ -150,6 +151,11 @@ namespace LightningVoucher.ln
 
             Console.WriteLine("LIGHTNINGLOG: GetInfo ");
             return Task.FromResult(this.getInfo);
+        }
+
+        public ulong getMaxSat()
+        {
+            return maxSatPerPayment;
         }
     }
     public static class Util

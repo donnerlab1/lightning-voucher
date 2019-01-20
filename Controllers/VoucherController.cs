@@ -134,8 +134,8 @@ namespace LightningVoucher.Controllers
         {
 
             Console.WriteLine("CONTROLLERLOG: GetVoucherInvoice " + amt + " " + satPerVoucher);
-            if (amt > 10 || satPerVoucher > 100)
-                return new Invoice {PaymentRequest = "ERROR: amount and satoshi per voucher is capped at 100"};
+            if (amt > 10 || satPerVoucher > _lightning.getMaxSat())
+                return new Invoice {PaymentRequest = "ERROR: Voucheramount is capped at 10 and satoshi per voucher is capped at " + _lightning.getMaxSat()};
             var payReq = await _lightning.GetPayReq(amt * satPerVoucher);
             var buyItem = _context.VoucherBuyItems.Add(new VoucherBuyItem() { Id = payReq.PaymentRequest, Amount = amt, SatPerVoucher = satPerVoucher, claimed = false}).Entity;
             _context.SaveChanges();
