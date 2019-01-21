@@ -19,6 +19,7 @@ namespace LightningVoucher.ln
 
         public static uint feePercentage;
         public static ulong maxSatPerPayment;
+        public static uint maxVouchers;
 
         private GetInfoResponse getInfo;
 
@@ -36,7 +37,8 @@ namespace LightningVoucher.ln
             var hexMac = Util.ToHex(File.ReadAllBytes(directory + "/admin.macaroon"));
             var rpc = config.GetValue<string>("rpc");
             feePercentage = config.GetValue<uint>("fee");
-            maxSatPerPayment = 500;
+            maxSatPerPayment = config.GetValue<uint>("max_sat");
+            maxVouchers = config.GetValue<uint>("max_voucher");
             var macaroonCallCredentials = new MacaroonCallCredentials(hexMac);
             var channelCreds = ChannelCredentials.Create(new SslCredentials(tls), macaroonCallCredentials.credentials);
             var lndChannel = new Grpc.Core.Channel(rpc, channelCreds);
@@ -156,6 +158,11 @@ namespace LightningVoucher.ln
         public ulong getMaxSat()
         {
             return maxSatPerPayment;
+        }
+
+        public uint getMaxAmt()
+        {
+            return maxVouchers;
         }
     }
     public static class Util

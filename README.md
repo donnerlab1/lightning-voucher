@@ -17,4 +17,4 @@ place tls.cert and admin macaroon in application folder
 
 `dotnet ef database update`
 
-`dotnet run rpc="localhost:10009" fee=5`
+`dotnet run rpc="localhost:10009" fee=5 max_sat=500 max_voucher=100`

@@ -18,6 +18,7 @@ namespace LightningVoucher.ln
         Task<GetInfoResponse> GetInfo();
         uint getFee();
         ulong getMaxSat();
+        uint getMaxAmt();
     }
 
     public class DemoLightning : ILightning
@@ -62,6 +63,11 @@ namespace LightningVoucher.ln
         }
 
         public ulong getMaxSat()
+        {
+            throw new NotImplementedException();
+        }
+
+        public uint getMaxAmt()
         {
             throw new NotImplementedException();
         }
