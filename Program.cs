@@ -18,6 +18,7 @@ namespace LightningVoucher
             //var builder = WebHost.CreateDefaultBuilder(args).UseConfiguration(config).UseStartup<Startup>();
             //builder.Build().Run();
             CreateWebHostBuilder(args).Build().Run();
+            
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>

@@ -14,6 +14,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.IO;
+using Prometheus;
+
+using LightningVoucher.Auth.Middlewares;
 
 namespace LightningVoucher
 {
@@ -61,6 +64,15 @@ namespace LightningVoucher
             //app.UseDefaultFiles();
             app.UseStaticFiles();
             app.UseHttpsRedirection();
+            app.Map("/metrics", metricsApp =>
+            {
+                //metricsApp.UseHttpExporter();
+                //metricsApp.UseMiddleware<BasicAuthMiddleware>("lightning voucher");
+                // We already specified URL prefix in .Map() above, no need to specify it again here.
+                metricsApp.UseMetricServer("");
+            });
+            
+
             //app.UseMvc();
             app.UseMvc(routes =>
             {

@@ -10,6 +10,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Formatters.Xml;
+using Prometheus;
 
 namespace LightningVoucher.ln
 {
@@ -20,11 +21,15 @@ namespace LightningVoucher.ln
         public static uint feePercentage;
         public static ulong maxSatPerPayment;
         public static uint maxVouchers;
-
+        public static readonly Counter PaymentsSent = Metrics.CreateCounter("payments_sent","number of payments sent.");
+        public static readonly Counter PaymentErrors = Metrics.CreateCounter("payments_errors", "number of payment not sent because of errors.");
+        public static readonly Counter SatoshiReceived = Metrics.CreateCounter("satoshi_received", "number of satoshis received. (in msat)");
+        public static readonly Counter SatoshiSent = Metrics.CreateCounter("satoshi_sent", "number of payments sent. (in msat)");
         private GetInfoResponse getInfo;
 
         public LndGrpcService(IConfiguration config)
         {
+            
             /*
             var certLoc = config.GetValue<string>("cert");
             var macLoc = config.GetValue<string>("mac");
@@ -62,8 +67,15 @@ namespace LightningVoucher.ln
                     PaymentError = "Error: too big of a payment"
                 };
             }
+
             var s = await client.SendPaymentSyncAsync(new SendRequest {PaymentRequest = payreq});
-            
+            if (s.PaymentError == "")
+            {
+                PaymentsSent.Inc();
+                SatoshiSent.Inc(s.PaymentRoute.TotalAmtMsat);
+            }
+            else
+                PaymentErrors.Inc();
             return s;
         }
 
@@ -116,6 +128,7 @@ namespace LightningVoucher.ln
             if (lookup.Settled)
             {
                 Console.WriteLine("invoice settled");
+                SatoshiReceived.Inc(lookup.AmtPaidMsat);
                 return true;
             }
 

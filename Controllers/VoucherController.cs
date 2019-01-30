@@ -8,6 +8,7 @@ using LightningVoucher.Models;
 using Lnrpc;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Prometheus;
 
 namespace LightningVoucher.Controllers
 {
@@ -17,6 +18,9 @@ namespace LightningVoucher.Controllers
     {
         private readonly VoucherContext _context;
         private readonly ILightning _lightning;
+
+        private static readonly Counter VoucherBuyRequestsMade =
+            Metrics.CreateCounter("voucher_buy_requests", "voucher buy requests made");
 
         public VoucherController(VoucherContext context, ILightning lightning)
         {
@@ -132,7 +136,7 @@ namespace LightningVoucher.Controllers
         [HttpGet("/api/[controller]/buy/{amt}/{satPerVoucher}")]
         public async Task<ActionResult<Invoice>> GetVoucherInvoice(uint amt, ulong satPerVoucher)
         {
-
+            VoucherBuyRequestsMade.Inc();
             Console.WriteLine("CONTROLLERLOG: GetVoucherInvoice " + amt + " " + satPerVoucher);
             if (amt > _lightning.getMaxAmt() || satPerVoucher > _lightning.getMaxSat())
                 return new Invoice {PaymentRequest = "ERROR: Voucheramount is capped at "+_lightning.getMaxAmt()+" and satoshi per voucher is capped at " + _lightning.getMaxSat()};
