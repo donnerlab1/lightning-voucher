@@ -16,7 +16,6 @@ using Microsoft.Extensions.Options;
 using System.IO;
 using Prometheus;
 
-using LightningVoucher.Auth.Middlewares;
 
 namespace LightningVoucher
 {
