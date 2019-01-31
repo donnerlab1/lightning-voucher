@@ -21,6 +21,7 @@ namespace LightningVoucher.Controllers
 
         private static readonly Counter VoucherBuyRequestsMade =
             Metrics.CreateCounter("voucher_buy_requests", "voucher buy requests made");
+        public static readonly Counter RoutingFeesPaidFor = Metrics.CreateCounter("routing_fees_paid_for", "routing fees we paid for in msat");
 
         public VoucherController(VoucherContext context, ILightning lightning)
         {
@@ -118,6 +119,10 @@ namespace LightningVoucher.Controllers
                 }
                 Console.WriteLine("COST: " + (ulong)res.PaymentRoute.TotalAmt + " AND " +(ulong)res.PaymentRoute.TotalAmtMsat + " AND " +(ulong)(res.PaymentRoute.TotalAmtMsat / 1000));
                 cost = (ulong) res.PaymentRoute.TotalAmt;
+                if (voucherItem.UsedSat == cost)
+                {
+                    RoutingFeesPaidFor.Inc(res.PaymentRoute.TotalAmtMsat);
+                }
                 voucherItem.UsedSat += cost;
                 _context.Entry(voucherItem).State = EntityState.Modified;
 

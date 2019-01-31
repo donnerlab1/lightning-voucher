@@ -25,6 +25,7 @@ namespace LightningVoucher.ln
         public static readonly Counter PaymentErrors = Metrics.CreateCounter("payments_errors", "number of payment not sent because of errors.");
         public static readonly Counter SatoshiReceived = Metrics.CreateCounter("satoshi_received", "number of satoshis received. (in msat)");
         public static readonly Counter SatoshiSent = Metrics.CreateCounter("satoshi_sent", "number of payments sent. (in msat)");
+        public static readonly Counter FeeEarned = Metrics.CreateCounter("fee_earned", "fees earned. (in sat)");
         private GetInfoResponse getInfo;
 
         public LndGrpcService(IConfiguration config)
@@ -103,6 +104,7 @@ namespace LightningVoucher.ln
             long fee = (long) (amt * (feePercentage/100f));
             if (fee < 1 && feePercentage != 0)
                 fee = 1;
+            FeeEarned.Inc(fee);
             var payreq = await client.AddInvoiceAsync(new Invoice
             {
                 Value = (long)amt+fee
