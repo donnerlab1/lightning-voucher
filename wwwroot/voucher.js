@@ -97,7 +97,6 @@ function useVoucher() {
 			$("#payment-div").show();
 			const tBody = $("#payment-table");	
 			$(tBody).empty();
-			console.log(window.btoa(data.paymentPreimage))
 			const tr = $("<tr></tr>");
 			if (data.paymentError === "")
 				data.paymentError = "Payment sent!"
@@ -113,7 +112,9 @@ function useVoucher() {
 						tr.append($("<td></td>").text(data.paymentError))
 
 						.append($("<td></td>").text(data.paymentRoute.totalAmt))
-						.append($("<td></td>").text(data.paymentRoute.totalFees));
+						.append($("<td></td>").text(data.paymentRoute.totalFees))
+                         
+						    .append($("<td></td>").text(data.paymentPreimage))
 						getVoucher();
 			}
 			

@@ -83,12 +83,11 @@ namespace LightningVoucher.Controllers
         }
 
         [HttpGet("/api/[controller]/pay/{token}/{payreq}")]
-        public async Task<ActionResult<SendResponse>> PayVoucher(string token, string payreq)
+        public async Task<ActionResult<PayInvoiceResponse>> PayVoucher(string token, string payreq)
         {
 
             Console.WriteLine("CONTROLLERLOG: PayVoucher " + token + " " + payreq);
             var voucherItem = await _context.VoucherItems.FindAsync(token);
-
             if (voucherItem == null)
             {
                 return NotFound();
@@ -103,7 +102,7 @@ namespace LightningVoucher.Controllers
                 if (cost > voucherItem.StartSat - voucherItem.UsedSat)
                 {
 
-                    return new SendResponse
+                    return new PayInvoiceResponse
                     {
                         PaymentError = "not enough satoshi on voucher"
                     };
@@ -115,7 +114,7 @@ namespace LightningVoucher.Controllers
                 {
 
                     _context.Entry(voucherItem).State = EntityState.Unchanged;
-                    return res;
+                    return new PayInvoiceResponse() { PaymentError = res.PaymentError};
                 }
                 Console.WriteLine("COST: " + (ulong)res.PaymentRoute.TotalAmt + " AND " +(ulong)res.PaymentRoute.TotalAmtMsat + " AND " +(ulong)(res.PaymentRoute.TotalAmtMsat / 1000));
                 cost = (ulong) res.PaymentRoute.TotalAmt;
@@ -133,8 +132,7 @@ namespace LightningVoucher.Controllers
                 }
                 await _context.SaveChangesAsync();
                 transaction.Commit();
-                
-                return res;
+                return new PayInvoiceResponse(){PaymentError =  res.PaymentError, PaymentPreimage = res.PaymentPreimage.ToBase64(), PaymentRoute = res.PaymentRoute};
             }
         }
 
@@ -235,4 +233,11 @@ public class ClaimVoucherResponse
 public class FeeResponse
 {
     public uint fee { get; set; }
+}
+
+public class PayInvoiceResponse
+{
+    public string PaymentError { get; set; }
+    public string PaymentPreimage { get; set; }
+    public Route PaymentRoute { get; set; }
 }
