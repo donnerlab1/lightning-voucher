@@ -12,13 +12,16 @@ namespace LightningVoucher.ln
     {
         Task<SendResponse> SendPayment(string payreq);
         Task<bool> ValidatePayment(string payreq, string preimage);
-        Task<ulong> SatCost(string payreq);
+        Task<long> SatCost(string payreq);
         Task<Invoice> GetPayReq(ulong amt);
         Task<PayReq> DecodePayReq(string payreq);
         Task<GetInfoResponse> GetInfo();
-        uint getFee();
+        uint getFeePercentage();
         ulong getMaxSat();
+
         uint getMaxAmt();
+        Task<long> getSatFee(string payreq);
+
     }
 
     public class DemoLightning : ILightning
@@ -36,9 +39,9 @@ namespace LightningVoucher.ln
             return Task.FromResult(true);
         }
 
-        public Task<ulong> SatCost(string payreq)
+        public Task<long> SatCost(string payreq)
         {
-            return Task.FromResult(1UL);
+            return Task.FromResult(1L);
         }
 
         public Task<Invoice> GetPayReq(ulong amt)
@@ -49,27 +52,33 @@ namespace LightningVoucher.ln
 
         public Task<PayReq> DecodePayReq(string payreq)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(new PayReq { Description = "test", NumSatoshis = 100 });
         }
 
-        public uint getFee()
+        public uint getFeePercentage()
         {
-            throw new NotImplementedException();
+            return 1;
         }
 
         public Task<GetInfoResponse> GetInfo()
         {
-            throw new NotImplementedException();
+            return Task.FromResult(new GetInfoResponse { Alias = "test" });
         }
 
         public ulong getMaxSat()
         {
-            throw new NotImplementedException();
+            return 100;
         }
 
         public uint getMaxAmt()
         {
-            throw new NotImplementedException();
+            return 100;
         }
+
+        public Task<long> getSatFee(string payreq)
+        {
+            return Task.FromResult(1l);
+        }
+
     }
 }

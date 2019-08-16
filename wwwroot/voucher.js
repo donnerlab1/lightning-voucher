@@ -3,21 +3,61 @@ const uri = "api/voucher";
 
 $(document).ready(function() {
 	$("#payment-div").hide();
-
+    $("#qr-preview").hide();
 	$("#get-voucher-div").hide();
 	$("#decode-invoice-button").click(function() {
 		decodePayment();
 	});
 	$("#buylink").attr("href", window.location.origin+"/voucher/");
-	getVoucher();
-	//getData();
+    getVoucher();
+    scanner = new Instascan.Scanner({ video: document.getElementById('qr-preview') });
+    scanner.addListener('scan', function (content) {
+        scanContent(content);
+    });
+    $("#start-qr").click(function () {
+        $("#qr-preview").show();
+        startScanner();
+    });
+	//getData();sca
 });
 
+function startScanner() {
+    Instascan.Camera.getCameras().then(function (cameras) {
+        if (cameras.length > 0) {
+            console.log("starting camera")
+            scanner.start(cameras[0]);
+        } else {
+            console.error('No cameras found.');
+        }
+    }).catch(function (e) {
+        console.error(e);
+    });
+}
+
+function scanContent(content) {
+    $("#qr-preview").hide();
+    scanner.stop();
+    console.log(content);
+    if (content.includes(":")) {
+        content = content.split(':')[1]
+    }
+    var decoded = lightningPayReq.decode(content);
+    console.log(decoded);
+    $("#voucher-payreq").val(decoded.paymentRequest);
+    decodePayment();
+}
 function decodePayment() {
 	const use_item = {
 		voucher_id: $("#voucher-id").val(),
 		pay_req: $("#voucher-payreq").val()
-	};
+    };
+    var decoded = lightningPayReq.decode(use_item.pay_req);
+    $("#decode-invoice-stuff").remove();
+    textfield = $("#decode-invoice-text");
+    textfield.show();
+    textfield.append("<span id='decode-invoice-stuff'>" + "Amount: " + decoded.satoshis + " satoshi Destination: " + decoded.payeeNodeKey + "<br>Description: " + decoded.tags[1].data + "</span>");
+    $("#voucher-buy-payreq").val(decoded.paymentRequest);
+    /*
 	$.ajax({
 		type: "GET",
 		url: uri + "/decode/" + use_item.pay_req,
@@ -39,7 +79,7 @@ function decodePayment() {
 		    textfield.show();
 		    textfield.append("<span id='decode-invoice-stuff' style='color:red'>INVALID INVOICE</span>");
 		}
-	});
+	});*/
 }
 function getVoucher() {
 	const use_item = {

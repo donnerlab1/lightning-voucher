@@ -97,14 +97,24 @@ namespace LightningVoucher.Controllers
 
             using (var transaction = _context.Database.BeginTransaction())
             {
+                var satCost = await _lightning.SatCost(payreq);
+                var calculatedFee = await _lightning.getSatFee(payreq);
+                if (calculatedFee == -1)
+                {
+                    return new PayInvoiceResponse
+                    {
+                        PaymentError = "could not find a route",
+                    };
+                }
+                var estimatedCost = (ulong) ( satCost + calculatedFee);
 
-                var cost = await _lightning.SatCost(payreq);
-                if (cost > voucherItem.StartSat - voucherItem.UsedSat)
+                Console.WriteLine("CONTROLLERLOG: Estimated Cost:" + estimatedCost);
+                if (estimatedCost > voucherItem.StartSat - voucherItem.UsedSat)
                 {
 
                     return new PayInvoiceResponse
                     {
-                        PaymentError = "not enough satoshi on voucher"
+                        PaymentError = "not enough satoshi on voucher to pay for transaction and network fee"
                     };
                 }
                 Console.WriteLine("CONTROLLERLOG: PayVoucher BEFORE PAYMENT" + token + " " + payreq);
@@ -116,13 +126,9 @@ namespace LightningVoucher.Controllers
                     _context.Entry(voucherItem).State = EntityState.Unchanged;
                     return new PayInvoiceResponse() { PaymentError = res.PaymentError};
                 }
-                Console.WriteLine("COST: " + (ulong)res.PaymentRoute.TotalAmt + " AND " +(ulong)res.PaymentRoute.TotalAmtMsat + " AND " +(ulong)(res.PaymentRoute.TotalAmtMsat / 1000));
-                cost = (ulong) res.PaymentRoute.TotalAmt;
-                if (voucherItem.UsedSat == cost)
-                {
-                    RoutingFeesPaidFor.Inc(res.PaymentRoute.TotalAmtMsat);
-                }
-                voucherItem.UsedSat += cost;
+                Console.WriteLine("COST: " + (ulong)(res.PaymentRoute.TotalAmtMsat / 1000));
+                var realCost = (ulong) (res.PaymentRoute.TotalAmtMsat / 1000);
+                voucherItem.UsedSat += realCost;
                 _context.Entry(voucherItem).State = EntityState.Modified;
 
                 if (voucherItem.UsedSat >= voucherItem.StartSat)
@@ -153,7 +159,7 @@ namespace LightningVoucher.Controllers
         {
             Console.WriteLine("CONTROLLERLOG: GetFee ");
 
-            return new FeeResponse {fee = _lightning.getFee()};
+            return new FeeResponse {fee = _lightning.getFeePercentage()};
         }
 
         [HttpGet("/api/[controller]/claim/{payreq}")]
@@ -166,7 +172,8 @@ namespace LightningVoucher.Controllers
             var response = new ClaimVoucherResponse();
             if (voucherBuyItem == null)
             {
-                response.ErrorCode = "Payment not Found";
+                
+                response.ErrorCode = "402 Payment Required";
             }
 
             else if (voucherBuyItem.claimed)
@@ -198,7 +205,7 @@ namespace LightningVoucher.Controllers
                 }
                 else
                 {
-                    response.ErrorCode = "Payment not valid";
+                    response.ErrorCode = "402 Payment Required";
 
                 }
 

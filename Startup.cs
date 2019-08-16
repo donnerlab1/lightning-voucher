@@ -33,16 +33,18 @@ namespace LightningVoucher
         {
             var connection = "Data Source=vouchers.db";
             services.AddDbContext<VoucherContext>(options => options.UseSqlite(connection));
-           
-            
-           // var lightning = new LndGrpcService(rpc, cert, hex);
 
-           
+
+            // var lightning = new LndGrpcService(rpc, cert, hex);
+
+
             //services.AddDbContext<VoucherContext>(opt =>
-             //   opt.UseInMemoryDatabase("VoucherList"));
-            services.AddSingleton<ILightning, LndGrpcService>();
+            //   opt.UseInMemoryDatabase("VoucherList"));
 
-            
+            services.AddSingleton<ILightning, LndGrpcService>();
+            //services.AddSingleton<ILightning, DemoLightning>();
+
+
             // services.AddTransient(services.Configure<LndGrpcService>(Configuration), typeof(ILightning));
             //services.AddTransient<ILightning, >();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
@@ -62,7 +64,6 @@ namespace LightningVoucher
 
             //app.UseDefaultFiles();
             app.UseStaticFiles();
-            app.UseHttpsRedirection();
             app.Map("/metrics", metricsApp =>
             {
                 //metricsApp.UseHttpExporter();

@@ -28,7 +28,7 @@ namespace LightningVoucher.Controllers
             if(getInfo.Uris.Count>0)
                 channelString = getInfo.Uris[0];
             ViewData["Channel"] = channelString;
-            ViewData["Fee"] = _lightning.getFee().ToString() + "%";
+            ViewData["Fee"] = _lightning.getFeePercentage().ToString() + "%";
             return View();
         }
 

@@ -1,13 +1,15 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-	<meta charset="UTF-8">
-	<title>lightning voucher</title>
-	<meta content="width=device-width, initial-scale=1" name="viewport">
-	<link href="/css/normalize.css" rel="stylesheet">
-	<link href="/css/skeleton.css" rel="stylesheet">
-	<link href="/css/voucher.css" rel="stylesheet">
-	<link href="/css/font.css" type="text/css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <title>lightning voucher</title>
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <link href="/css/normalize.css" rel="stylesheet">
+    <link href="/css/skeleton.css" rel="stylesheet">
+    <link href="/css/voucher.css" rel="stylesheet">
+    <link href="/css/font.css" type="text/css" rel="stylesheet">
+    <script type="text/javascript" src="~/instascan.min.js"></script>
+    <script type="text/javascript" src="~/bolt11.min.js"></script>
 </head>
 <body style>
 <div class="hero">
@@ -17,44 +19,48 @@
 	<p>Use Vouchers to easily pay for lightning invoices.<br>HOWTO: Enter payment request and click PAY. May take some time</p><a href="test&" id="buylink">Buy Vouchers here</a>
 </div>
 <div class="centered">
-	<div id="use-voucher">
-		<h3>Use Voucher</h3>
-		<form action="javascript:void(0);" method="GET" onsubmit="useVoucher()">
-			<input type="text" id="voucher-payreq" placeholder="Payment Request">
-			<input type="button" id="decode-invoice-button" value="Decode">
-			<input type="submit" id="use-voucher-button" value="Pay">
-		</form>
-		<div id="decode-invoice-text">
+    <div id="use-voucher">
+        <h3>Use Voucher</h3>
+        <form action="javascript:void(0);" method="GET" onsubmit="useVoucher()">
+            <input type="button" id="start-qr" value="Scan QR">
+            <input type="text" id="voucher-payreq" placeholder="Payment Request">
+            <input type="button" id="decode-invoice-button" value="Decode">
+            <input type="submit" id="use-voucher-button" value="Pay">
 
-		</div>
-		<div id="payment-div">
-			<table align="center">
-				<tr>
-					<th>Status Code</th>
-					<th>Total Cost</th>
-				    <th>Routing Fees</th>
-				    <th>Preimage</th>
-				</tr>
-				<tbody id="payment-table"></tbody>
-			</table>
-		</div>
-		<p id="voucher-id">@ViewData["VoucherId"]</p>
-		<form action="javascript:void(0);" method="GET" onsubmit="getVoucher()">
-			<input type="submit" value="Update">
-		</form>
-		<div id="get-voucher-div">
-			<table align="center">
-				<tr>
-					<th>Voucher</th>
-					<th>Remaining Satoshi</th>
-				    <th>Starting Satoshi</th>
-				</tr>
-				<tbody id="get-voucher-table"></tbody>
-			</table>
-		</div>
-		
+        </form>
 
-	</div>
+        <video id="qr-preview"></video>
+        <div id="decode-invoice-text">
+
+        </div>
+        <div id="payment-div">
+            <table align="center">
+                <tr>
+                    <th>Status Code</th>
+                    <th>Total Cost</th>
+                    <th>Routing Fees</th>
+                    <th>Preimage</th>
+                </tr>
+                <tbody id="payment-table"></tbody>
+            </table>
+        </div>
+        <p id="voucher-id">@ViewData["VoucherId"]</p>
+        <form action="javascript:void(0);" method="GET" onsubmit="getVoucher()">
+            <input type="submit" value="Update">
+        </form>
+        <div id="get-voucher-div">
+            <table align="center">
+                <tr>
+                    <th>Voucher</th>
+                    <th>Remaining Satoshi</th>
+                    <th>Starting Satoshi</th>
+                </tr>
+                <tbody id="get-voucher-table"></tbody>
+            </table>
+        </div>
+
+
+    </div>
 	
     <p>Powered by: <a href="https://github.com/donnerlab1/lightning-voucher">https://github.com/donnerlab1/lightning-voucher</a> </p>
 </div>

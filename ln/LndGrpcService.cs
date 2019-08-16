@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Formatters.Xml;
 using Prometheus;
+using System.Linq;
 
 namespace LightningVoucher.ln
 {
@@ -21,6 +22,7 @@ namespace LightningVoucher.ln
         public static uint feePercentage;
         public static ulong maxSatPerPayment;
         public static uint maxVouchers;
+        
         public static readonly Counter PaymentsSent = Metrics.CreateCounter("payments_sent","number of payments sent.");
         public static readonly Counter PaymentErrors = Metrics.CreateCounter("payments_errors", "number of payment not sent because of errors.");
         public static readonly Counter SatoshiReceived = Metrics.CreateCounter("satoshi_received", "number of satoshis received. (in msat)");
@@ -39,8 +41,8 @@ namespace LightningVoucher.ln
             var directory = Path.GetFullPath(certLoc);
             Console.WriteLine(rpc + " stuff " + directory);*/
             var directory = Environment.CurrentDirectory;
-            var tls = File.ReadAllText(directory + "/tls.cert");
-            var hexMac = Util.ToHex(File.ReadAllBytes(directory + "/admin.macaroon"));
+            var tls = File.ReadAllText(directory + "./../lnd-test-cluster/docker/temp/lnd-alice/tls.cert");
+            var hexMac = Util.ToHex(File.ReadAllBytes(directory + "./../lnd-test-cluster/docker/temp/lnd-alice/data/chain/bitcoin/regtest/admin.macaroon"));
             var rpc = config.GetValue<string>("rpc");
             feePercentage = config.GetValue<uint>("fee");
             maxSatPerPayment = config.GetValue<uint>("max_sat");
@@ -50,7 +52,6 @@ namespace LightningVoucher.ln
             var lndChannel = new Grpc.Core.Channel(rpc, channelCreds);
 
             client = new Lightning.LightningClient(lndChannel);
-
             getInfo = client.GetInfo(new GetInfoRequest());
             Console.WriteLine(getInfo.ToString());
 
@@ -90,7 +91,7 @@ namespace LightningVoucher.ln
             return s;
         }
 
-        public uint getFee()
+        public uint getFeePercentage()
         {
             Console.WriteLine("LIGHTNINGLOG: GetFee ");
             return feePercentage;
@@ -137,14 +138,15 @@ namespace LightningVoucher.ln
             return false;
         }
 
-        public async Task<ulong> SatCost(string payreq)
+        public async Task<long> SatCost(string payreq)
         {
             Console.WriteLine("LIGHTNINGLOG: SatCost " + payreq);
             var decode = await client.DecodePayReqAsync(new PayReqString
             {
                 PayReq = payreq
             });
-            return (ulong) decode.NumSatoshis;
+
+            return  decode.NumSatoshis;
         }
 
 
@@ -178,6 +180,34 @@ namespace LightningVoucher.ln
         public uint getMaxAmt()
         {
             return maxVouchers;
+        }
+
+        public async Task<long> getSatFee(string payreq)
+        {
+            Console.WriteLine("LIGHTNINGLOG: GETSATFEE " + payreq);
+            var decode = await client.DecodePayReqAsync(new PayReqString
+            {
+                PayReq = payreq
+            });
+            var cost = await client.QueryRoutesAsync(new QueryRoutesRequest { Amt = decode.NumSatoshis, PubKey = decode.Destination, UseMissionControl = true });
+            long highestCost = -1;
+            foreach(var route in cost.Routes)
+            {
+                
+                if (route.TotalFeesMsat > highestCost)
+                    highestCost = route.TotalFeesMsat;
+            }
+            if (highestCost == -1)
+                return -1;
+            return (highestCost / 1000);
+        }
+        public static byte[] StringToByteArray(String hex)
+        {
+            int NumberChars = hex.Length;
+            byte[] bytes = new byte[NumberChars / 2];
+            for (int i = 0; i < NumberChars; i += 2)
+                bytes[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
+            return bytes;
         }
     }
     public static class Util
