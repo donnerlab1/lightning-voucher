@@ -41,8 +41,8 @@ namespace LightningVoucher.ln
             var directory = Path.GetFullPath(certLoc);
             Console.WriteLine(rpc + " stuff " + directory);*/
             var directory = Environment.CurrentDirectory;
-            var tls = File.ReadAllText(directory + "./../lnd-test-cluster/docker/temp/lnd-alice/tls.cert");
-            var hexMac = Util.ToHex(File.ReadAllBytes(directory + "./../lnd-test-cluster/docker/temp/lnd-alice/data/chain/bitcoin/regtest/admin.macaroon"));
+            var tls = File.ReadAllText(directory + "/tls.cert");
+            var hexMac = Util.ToHex(File.ReadAllBytes(directory + "/admin.macaroon"));
             var rpc = config.GetValue<string>("rpc");
             feePercentage = config.GetValue<uint>("fee");
             maxSatPerPayment = config.GetValue<uint>("max_sat");
