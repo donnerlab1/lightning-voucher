@@ -1,5 +1,5 @@
 const uri = "api/voucher";
-
+cameraOn = false;
 
 $(document).ready(function() {
 	$("#payment-div").hide();
@@ -15,15 +15,27 @@ $(document).ready(function() {
         scanContent(content);
     });
     $("#start-qr").click(function () {
-        $("#qr-preview").show();
-        startScanner();
+        if (!cameraOn) {
+
+            $("#qr-preview").show();
+            startScanner();
+        } else {
+
+            $("#qr-preview").hide();
+            scanner.stop();
+            cameraOn = false;
+        }
     });
 	//getData();sca
 });
 
 function startScanner() {
+    cameraOn = true;
     Instascan.Camera.getCameras().then(function (cameras) {
-        if (cameras.length > 0) {
+        if (cameras.length > 1) {
+            console.log("starting camera")
+            scanner.start(cameras[1]);
+        } else if (cameras.length > 0) {
             console.log("starting camera")
             scanner.start(cameras[0]);
         } else {

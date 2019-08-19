@@ -189,7 +189,17 @@ namespace LightningVoucher.ln
             {
                 PayReq = payreq
             });
-            var cost = await client.QueryRoutesAsync(new QueryRoutesRequest { Amt = decode.NumSatoshis, PubKey = decode.Destination, UseMissionControl = true });
+            QueryRoutesResponse cost;
+            try
+            {
+                cost = await client.QueryRoutesAsync(new QueryRoutesRequest { Amt = decode.NumSatoshis, PubKey = decode.Destination, UseMissionControl = true });
+            } catch(RpcException e)
+            {
+                Console.WriteLine(e);
+                return 10;
+            }
+            if (cost == null)
+                return 10;
             long highestCost = -1;
             foreach(var route in cost.Routes)
             {
