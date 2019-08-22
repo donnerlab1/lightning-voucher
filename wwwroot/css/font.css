@@ -2,17 +2,17 @@
   font-family: 'Raleway';
   font-style: normal;
   font-weight: 300;
-  src: local('Raleway Light'), local('Raleway-Light'), url(/fonts/Raleway-Light.ttf) format('truetype');
+  src: local('Raleway Light'), local('Raleway-Light'), url(/voucher/fonts/Raleway-Light.ttf) format('truetype');
 }
 @font-face {
   font-family: 'Raleway';
   font-style: normal;
   font-weight: 400;
-  src: local('Raleway'), local('Raleway-Regular'), url(/fonts/Raleway-Regular.ttf) format('truetype');
+  src: local('Raleway'), local('Raleway-Regular'), url(/voucher/fonts/Raleway-Regular.ttf) format('truetype');
 }
 @font-face {
   font-family: 'Raleway';
   font-style: normal;
   font-weight: 600;
-  src: local('Raleway SemiBold'), local('Raleway-SemiBold'), url(/fonts/Raleway-SemiBold.ttf) format('truetype');
+  src: local('Raleway SemiBold'), local('Raleway-SemiBold'), url(/voucher/fonts/Raleway-SemiBold.ttf) format('truetype');
 }

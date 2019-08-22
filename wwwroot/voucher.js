@@ -80,7 +80,7 @@ function decodePayment() {
     /*
 	$.ajax({
 		type: "GET",
-		url: uri + "/decode/" + use_item.pay_req,
+		url: "https://donnerlab.com/voucher/api/voucher/decode/" + use_item.pay_req,
 		cache: false,
 		success: function (data) {
 			console.log(data);
@@ -108,7 +108,7 @@ function getVoucher() {
 	};
 	$.ajax({
 		type: "GET",
-		url: uri + "/" + use_item.voucher_id,
+		url: "https://donnerlab.com/voucher/api/voucher/" + use_item.voucher_id,
 		cache: false,
 		success: function (data) {
 			console.log(data);
@@ -150,7 +150,7 @@ function useVoucher() {
     }
 	$.ajax({
 		type: "GET",
-		url: uri + "/pay/" + use_item.voucher_id + "/" + use_item.pay_req,
+		url: "https://donnerlab.com/voucher/api/voucher/pay/" + use_item.voucher_id + "/" + use_item.pay_req,
 		cache: false,
 		success: function (data) {
 		    voucher_button.removeAttr("disabled");

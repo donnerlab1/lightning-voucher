@@ -20,7 +20,7 @@
     "lightning_voucher": {
       "commandName": "Project",
       "launchBrowser": true,
-      "applicationUrl": "http://*:5000",
+      "applicationUrl": "http://*:5123",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

@@ -30,7 +30,7 @@ function buyVoucher() {
 	}
 	$.ajax({
 		type: "GET",
-		url: uri + "/buy/" + buy_item.buy_amt + "/" + buy_item.buy_sat,
+		url: "https://donnerlab.com/voucher/api/voucher/buy/" + buy_item.buy_amt + "/" + buy_item.buy_sat,
 		cache: false,
 		success: function(data) {
 			console.log(data);
@@ -56,7 +56,7 @@ function claimVoucher() {
 	};
 	$.ajax({
 		type: "GET",
-		url: uri + "/claim/" + claim_item.claim_payreq,
+		url: "https://donnerlab.com/voucher/api/voucher/claim/" + claim_item.claim_payreq,
 		cache: false,
 		success: function(data) {
 			console.log(data);
@@ -71,7 +71,7 @@ function claimVoucher() {
 						
 						restSat = item.startSat - item.usedSat;
 						const tr = $("<tr></tr>")
-							.append($("<td><a href=" + window.location.href + item.id + ">" +item.id.toString() + "</a></td>"))
+							.append($("<td><a href=" + "https://donnerlab.com/voucher/" + item.id + ">" +item.id.toString() + "</a></td>"))
 							.append($("<td></td>").text(restSat));
 						tr.appendTo(tBody);
 					});
