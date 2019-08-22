@@ -10,7 +10,11 @@ $(document).ready(function() {
 	});
 	$("#buylink").attr("href", window.location.origin+"/voucher/");
     getVoucher();
-    scanner = new Instascan.Scanner({ video: document.getElementById('qr-preview') });
+    scanner = new Instascan.Scanner({ 
+		video: document.getElementById('qr-preview'),
+		mirror: false,
+		backgroundScan: false,
+		 });
     scanner.addListener('scan', function (content) {
         scanContent(content);
     });
@@ -47,7 +51,8 @@ function startScanner() {
 }
 
 function scanContent(content) {
-    $("#qr-preview").hide();
+	$("#qr-preview").hide();
+	cameraOn = false;
     scanner.stop();
     console.log(content);
     if (content.includes(":")) {
@@ -62,7 +67,10 @@ function decodePayment() {
 	const use_item = {
 		voucher_id: $("#voucher-id").val(),
 		pay_req: $("#voucher-payreq").val()
-    };
+	};
+	if (use_item.pay_req.includes(":")) {
+        use_item.pay_req = use_item.pay_req.split(':')[1]
+    }
     var decoded = lightningPayReq.decode(use_item.pay_req);
     $("#decode-invoice-stuff").remove();
     textfield = $("#decode-invoice-text");
@@ -137,6 +145,9 @@ function useVoucher() {
 		voucher_id: $("#voucher-id").text(),
 		pay_req : $("#voucher-payreq").val()
 	};
+	if (use_item.pay_req.includes(":")) {
+        use_item.pay_req = use_item.pay_req.split(':')[1]
+    }
 	$.ajax({
 		type: "GET",
 		url: uri + "/pay/" + use_item.voucher_id + "/" + use_item.pay_req,
