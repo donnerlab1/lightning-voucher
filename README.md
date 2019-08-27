@@ -9,7 +9,9 @@ simple voucher system for lnd.
 
 ## usage
 
-place tls.cert and admin macaroon in application folder
+place tls.cert and admin.macaroon in application folder
+
+needs .net core 2.2
 
 `dotnet restore`
 
